@@ -1,0 +1,18 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: watchtower-postgres
+    environment:
+      POSTGRES_DB: watchtower
+      POSTGRES_USER: watchtower
+      POSTGRES_PASSWORD: watchtower123
+    ports:
+      - "5432:5432"
+
+  backend:
+    build: .
+    container_name: backend-app
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres

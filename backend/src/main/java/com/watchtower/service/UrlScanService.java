@@ -1,22 +1,32 @@
 package com.watchtower.service;
 
-import com.watchtower.client.GoogleSafeBrowsingClient;
-import com.watchtower.model.ScanResponse;
+import com.watchtower.model.ScanRecord;
+import com.watchtower.repository.ScanRecordRepository;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class UrlScanService {
 
-    private final GoogleSafeBrowsingClient googleClient;
+    private final ScanRecordRepository repository;
 
-    public UrlScanService(GoogleSafeBrowsingClient googleClient) {
-        this.googleClient = googleClient;
+    public UrlScanService(ScanRecordRepository repository) {
+        this.repository = repository;
     }
 
-    public ScanResponse scanUrl(String url) {
+    public boolean scanUrl(String url) {
 
-        boolean safe = googleClient.isSafe(url);
+        boolean safe = true;
 
-        return new ScanResponse(url, safe);
+        ScanRecord record = new ScanRecord(url, safe);
+
+        repository.save(record);
+
+        return safe;
+    }
+
+    public List<ScanRecord> getHistory() {
+        return repository.findAll();
     }
 }
